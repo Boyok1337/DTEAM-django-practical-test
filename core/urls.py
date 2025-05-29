@@ -13,4 +13,9 @@ urlpatterns = [
         views.CurriculumVitaDetailedView.as_view(),
         name="curriculum_vita_detailed"
     ),
+    path(
+        "cv/<int:curriculum_id>/pdf/",
+        views.CurriculumVitaPDFView.as_view(),
+        name="curriculum_vita_pdf"
+    ),
 ]
