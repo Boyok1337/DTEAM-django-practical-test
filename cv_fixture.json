@@ -1,0 +1,88 @@
+[
+  {
+    "model": "core.skill",
+    "pk": 1,
+    "fields": {
+      "name": "Python",
+      "created_at": "2025-05-29T12:00:00Z",
+      "updated_at": "2025-05-29T12:00:00Z"
+    }
+  },
+  {
+    "model": "core.skill",
+    "pk": 2,
+    "fields": {
+      "name": "Django",
+      "created_at": "2025-05-29T12:05:00Z",
+      "updated_at": "2025-05-29T12:05:00Z"
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": 1,
+    "fields": {
+      "name": "CV Website",
+      "description": "A personal portfolio site.",
+      "created_at": "2025-05-29T12:10:00Z",
+      "updated_at": "2025-05-29T12:10:00Z"
+    }
+  },
+  {
+    "model": "core.project",
+    "pk": 2,
+    "fields": {
+      "name": "API Backend",
+      "description": "A backend API for mobile apps.",
+      "created_at": "2025-05-29T12:15:00Z",
+      "updated_at": "2025-05-29T12:15:00Z"
+    }
+  },
+  {
+    "model": "core.contact",
+    "pk": 1,
+    "fields": {
+      "type": "email",
+      "contact_link": "john@example.com",
+      "created_at": "2025-05-29T12:20:00Z",
+      "updated_at": "2025-05-29T12:20:00Z"
+    }
+  },
+  {
+    "model": "core.contact",
+    "pk": 2,
+    "fields": {
+      "type": "phone",
+      "contact_link": "+380991234567",
+      "created_at": "2025-05-29T12:25:00Z",
+      "updated_at": "2025-05-29T12:25:00Z"
+    }
+  },
+  {
+    "model": "core.curriculumvitae",
+    "pk": 1,
+    "fields": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "bio": "Experienced Python developer.",
+      "contacts": 1,
+      "skills": [1, 2],
+      "projects": [1],
+      "created_at": "2025-05-29T12:30:00Z",
+      "updated_at": "2025-05-29T12:30:00Z"
+    }
+  },
+  {
+    "model": "core.curriculumvitae",
+    "pk": 2,
+    "fields": {
+      "first_name": "Anna",
+      "last_name": "Smith",
+      "bio": "Django specialist with frontend skills.",
+      "contacts": 2,
+      "skills": [2],
+      "projects": [1, 2],
+      "created_at": "2025-05-29T12:35:00Z",
+      "updated_at": "2025-05-29T12:35:00Z"
+    }
+  }
+]
