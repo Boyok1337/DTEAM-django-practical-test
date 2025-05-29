@@ -2,7 +2,12 @@
 
 {% block content %}
   <div class="container my-5">
-    <a href="{% url 'curriculum_vitae_list' %}" class="btn btn-secondary mb-4">&larr; Back to CV list</a>
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'curriculum_vitae_list' %}" class="btn btn-secondary mb-4">&larr; Back to CV list</a>
+      <a href="{% url 'curriculum_vita_pdf' curriculum_id=cv.pk %}" class="btn btn-outline-primary mb-4">
+        Download as PDF
+      </a>
+    </div>
 
     <div class="card shadow">
       <div class="card-header">
