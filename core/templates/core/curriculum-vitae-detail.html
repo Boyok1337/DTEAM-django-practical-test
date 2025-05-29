@@ -1,0 +1,49 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+  <div class="container my-5">
+    <a href="{% url 'curriculum_vitae_list' %}" class="btn btn-secondary mb-4">&larr; Back to CV list</a>
+
+    <div class="card shadow">
+      <div class="card-header">
+        <h2 class="mb-0">{{ cv.first_name }} {{ cv.last_name }}</h2>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Biography</h5>
+        <p class="card-text">{{ cv.bio }}</p>
+
+        <hr>
+
+        <h5>Contact Information</h5>
+        <p>
+          <strong>{{ cv.contacts.type|capfirst }}:</strong>
+          <a href="{{ cv.contacts.contact_link }}" target="_blank" rel="noopener noreferrer">
+            {{ cv.contacts.contact_link }}
+          </a>
+        </p>
+
+        <hr>
+
+        <h5>Skills</h5>
+        <div class="mb-3">
+          {% for skill in cv.skills.all %}
+            <span class="badge bg-primary me-1">{{ skill.name }}</span>
+          {% empty %}
+            <p>No skills listed.</p>
+          {% endfor %}
+        </div>
+
+        <h5>Projects</h5>
+        {% for project in cv.projects.all %}
+          <div class="mb-2">
+            <h6 class="mb-1">{{ project.name }}</h6>
+            <p class="mb-0">{{ project.description }}</p>
+          </div>
+        {% empty %}
+          <p>No projects listed.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
