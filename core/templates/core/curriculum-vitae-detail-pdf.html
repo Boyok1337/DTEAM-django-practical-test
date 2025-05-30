@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ cv.first_name }} {{ cv.last_name }} - CV</title>
+  <style>
+      body {
+          font-family: sans-serif;
+          padding: 2rem;
+      }
+
+      h1 {
+          border-bottom: 2px solid #333;
+      }
+
+      ul {
+          padding-left: 1.2rem;
+      }
+  </style>
+</head>
+<body>
+<h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
+<p><strong>Bio:</strong> {{ cv.bio }}</p>
+<p><strong>Contact:</strong> {{ cv.contacts.contact_link }}</p>
+
+<h2>Skills</h2>
+<ul>
+  {% for skill in cv.skills.all %}
+    <li>{{ skill.name }}</li>
+  {% endfor %}
+</ul>
+
+<h2>Projects</h2>
+<ul>
+  {% for project in cv.projects.all %}
+    <li><strong>{{ project.name }}</strong>: {{ project.description }}</li>
+  {% endfor %}
+</ul>
+</body>
+</html>
