@@ -1,0 +1,129 @@
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-messages alert-{{ message.tags }} alert-dismissible fade show message" role="alert">
+      <div class="d-flex align-items-center">
+        {% if message.tags == 'info' %}
+          <i class="bi bi-info-circle-fill me-2 alert-icon"></i>
+        {% elif message.tags == 'warning' %}
+          <i class="bi bi-exclamation-triangle-fill me-2 alert-icon"></i>
+        {% elif message.tags == 'error' or message.tags == 'danger' %}
+          <i class="bi bi-x-circle-fill me-2 alert-icon"></i>
+        {% elif message.tags == 'success' %}
+          <i class="bi bi-check-circle-fill me-2 alert-icon"></i>
+        {% endif %}
+        <strong class="alert-title m-0 text-white {{ message.tags }}">{{ message.level_tag|capfirst }}</strong>
+      </div>
+      <p class="text-white mt-1">{{ message }}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<style>
+    .message {
+        position: fixed;
+        right: 50px;
+        bottom: 50px;
+        z-index: 9999;
+        max-width: 350px;
+        width: 100%;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: opacity 1s ease-in-out;
+        animation: slide-in 0.5s ease-out;
+        color: #fff;
+    }
+
+    .message.success {
+        background-color: #28a745;
+    }
+
+    .message.warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .message.error,
+    .message.danger {
+        background-color: #dc3545;
+    }
+
+    .message.info {
+        background-color: #17a2b8;
+    }
+
+    .alert-title {
+        display: inline-block;
+        font-size: 1.2em;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-bottom: 8px;
+    }
+
+    .message.success .alert-title,
+    .message.error .alert-title,
+    .message.danger .alert-title,
+    .message.info .alert-title {
+        color: #fff;
+    }
+
+    .message.warning .alert-title {
+        color: #212529;
+    }
+
+    .alert p {
+        margin-bottom: 0;
+    }
+
+    @keyframes slide-in {
+        0% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .message {
+            right: 20px;
+            bottom: 20px;
+            max-width: 90%;
+            padding: 10px;
+        }
+
+        .alert-title {
+            font-size: 1em;
+        }
+    }
+
+    @media (min-width: 577px) {
+        .message {
+            right: 50px;
+            bottom: 50px;
+            max-width: 350px;
+            padding: 15px;
+        }
+
+        .alert-title {
+            font-size: 1.2em;
+        }
+    }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.alert-messages').forEach(alert => {
+            if (alert.classList.contains('alert-success')) {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 1000);
+                }, 10000);
+            }
+        });
+    });
+</script>
