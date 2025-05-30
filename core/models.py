@@ -17,14 +17,14 @@ class CurriculumVitae(BaseModel):
 
 
 class Skill(BaseModel):
-    name = models.CharField(_("Name"), max_length=255)
+    name = models.CharField(_("Name"), max_length=255, unique=True)
 
     def __str__(self):
         return f"{self.name}"
 
 
 class Project(BaseModel):
-    name = models.CharField(_("Name"), max_length=255)
+    name = models.CharField(_("Name"), max_length=255, unique=True)
     description = models.TextField(_("Description"))
 
     def __str__(self):
