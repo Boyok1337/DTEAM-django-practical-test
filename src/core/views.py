@@ -1,9 +1,11 @@
+from django.contrib import messages
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
 from core.models import CurriculumVitae
 from core.utils import PDFRenderer
+from core.tasks import send_cv_pdf_email
 
 
 class CurriculumVitaView(View):
@@ -62,3 +64,17 @@ class CurriculumVitaPDFView(View):
 
 def settings_view(request):
     return render(request, 'core/settings_page.html')
+
+
+class CurriculumVitaeEmailPdf(View):
+    def get(self, request, curriculum_id):
+        email = request.GET.get('email')
+        cv = get_object_or_404(CurriculumVitae, id=curriculum_id)
+
+        if not email:
+            messages.error(request, "No email address provided.")
+            return redirect("curriculum_vita_detailed")
+
+        send_cv_pdf_email.delay(email, cv.id)
+        messages.success(request, "PFD email sent.")
+        return redirect("curriculum_vitae_list")

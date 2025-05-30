@@ -7,6 +7,19 @@
       <a href="{% url 'curriculum_vita_pdf' curriculum_id=cv.pk %}" class="btn btn-outline-primary mb-4">
         Download as PDF
       </a>
+      <form method="get" action="{% url 'curriculum_vita_email_pdf' curriculum_id=cv.id %}"
+            class="d-flex align-items-center gap-2 mb-4">
+        <input
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            required
+            class="form-control"
+        >
+        <button type="submit" class="btn btn-info w-100">
+          Send PDF to Email
+        </button>
+      </form>
     </div>
 
     <div class="card shadow">
