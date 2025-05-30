@@ -24,6 +24,11 @@ urlpatterns = [
         name="curriculum_vita_email_pdf"
     ),
     path(
+        "cv/<int:curriculum_id>/translate/",
+        views.translate_curriculum_vita_view,
+        name="translate_curriculum_vita"
+    ),
+    path(
         "settings/",
         views.settings_view,
         name="settings"
