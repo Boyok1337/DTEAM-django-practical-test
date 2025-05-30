@@ -19,6 +19,11 @@ urlpatterns = [
         name="curriculum_vita_pdf"
     ),
     path(
+        "cv/<int:curriculum_id>/",
+        views.CurriculumVitaeEmailPdf.as_view(),
+        name="curriculum_vita_email_pdf"
+    ),
+    path(
         "settings/",
         views.settings_view,
         name="settings"
