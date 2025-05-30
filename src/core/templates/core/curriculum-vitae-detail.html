@@ -22,46 +22,237 @@
       </form>
     </div>
 
-    <div class="card shadow">
-      <div class="card-header">
-        <h2 class="mb-0">{{ cv.first_name }} {{ cv.last_name }}</h2>
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Biography</h5>
-        <p class="card-text">{{ cv.bio }}</p>
+    <div class="d-flex gap-3 align-items-center my-3">
+      <select id="language-selector" class="form-select w-auto">
+        <option value="co">Cornish</option>
+        <option value="gv">Manx</option>
+        <option value="br">Breton</option>
+        <option value="iu">Inuktitut</option>
+        <option value="kl">Kalaallisut</option>
+        <option value="rm">Romani</option>
+        <option value="oc">Occitan</option>
+        <option value="lad">Ladino</option>
+        <option value="se">Northern Sami</option>
+        <option value="hsb">Upper Sorbian</option>
+        <option value="csb">Kashubian</option>
+        <option value="zza">Zazaki</option>
+        <option value="cv">Chuvash</option>
+        <option value="liv">Livonian</option>
+        <option value="tsd">Tsakonian</option>
+        <option value="srm">Saramaccan</option>
+        <option value="bi">Bislama</option>
+      </select>
+      <button id="translate-btn" class="btn btn-warning">Translate</button>
+      <button id="restore-btn" class="btn btn-secondary" style="display: none;">Restore Original</button>
+    </div>
 
-        <hr>
-
-        <h5>Contact Information</h5>
-        <p>
-          <strong>{{ cv.contacts.type|capfirst }}:</strong>
-          <a href="{{ cv.contacts.contact_link }}" target="_blank" rel="noopener noreferrer">
-            {{ cv.contacts.contact_link }}
-          </a>
-        </p>
-
-        <hr>
-
-        <h5>Skills</h5>
-        <div class="mb-3">
-          {% for skill in cv.skills.all %}
-            <span class="badge bg-primary me-1">{{ skill.name }}</span>
-          {% empty %}
-            <p>No skills listed.</p>
-          {% endfor %}
+    <div id="cv-translation-area">
+      <div class="card shadow">
+        <div class="card-header">
+          <h2 class="mb-0" id="cv-name">{{ cv.first_name }} {{ cv.last_name }}</h2>
         </div>
+        <div class="card-body">
+          <h5 class="card-title" id="bio-title">Biography</h5>
+          <p class="card-text" id="cv-bio">{{ cv.bio }}</p>
 
-        <h5>Projects</h5>
-        {% for project in cv.projects.all %}
-          <div class="mb-2">
-            <h6 class="mb-1">{{ project.name }}</h6>
-            <p class="mb-0">{{ project.description }}</p>
+          <hr>
+
+          <h5 id="contact-title">Contact Information</h5>
+          <p id="cv-contact">
+            <strong>{{ cv.contacts.type|capfirst }}:</strong>
+            <a href="{{ cv.contacts.contact_link }}" target="_blank" rel="noopener noreferrer">
+              {{ cv.contacts.contact_link }}
+            </a>
+          </p>
+
+          <hr>
+
+          <h5 id="skills-title">Skills</h5>
+          <div class="mb-3" id="cv-skills">
+            {% for skill in cv.skills.all %}
+              <span class="badge bg-primary me-1" data-skill-name="{{ skill.name }}">{{ skill.name }}</span>
+            {% empty %}
+              <p>No skills listed.</p>
+            {% endfor %}
           </div>
-        {% empty %}
-          <p>No projects listed.</p>
-        {% endfor %}
+
+          <h5 id="projects-title">Projects</h5>
+          <div id="cv-projects">
+            {% for project in cv.projects.all %}
+              <div class="mb-2" data-project-name="{{ project.name }}" data-project-desc="{{ project.description }}">
+                <h6 class="mb-1 project-name">{{ project.name }}</h6>
+                <p class="mb-0 project-desc">{{ project.description }}</p>
+              </div>
+            {% empty %}
+              <p>No projects listed.</p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+{% endblock %}
+
+{% block extra_js %}
+{#  Better move to external js file, but leave here for faster develop !BAD PRACTICE! #}
+  <script>
+      let originalContent = null;
+
+      document.getElementById("translate-btn").addEventListener("click", () => {
+          const langCode = document.getElementById("language-selector").value;
+          const translateBtn = document.getElementById("translate-btn");
+          const restoreBtn = document.getElementById("restore-btn");
+
+          if (!originalContent) {
+              originalContent = {
+                  bio: document.getElementById("cv-bio").innerText,
+                  contact: document.getElementById("cv-contact").innerText,
+                  skills: [],
+                  projects: []
+              };
+
+              document.querySelectorAll('[data-skill-name]').forEach(skill => {
+                  originalContent.skills.push(skill.getAttribute('data-skill-name'));
+              });
+
+              document.querySelectorAll('[data-project-name]').forEach(project => {
+                  originalContent.projects.push({
+                      name: project.getAttribute('data-project-name'),
+                      description: project.getAttribute('data-project-desc')
+                  });
+              });
+          }
+
+          const bio = document.getElementById("cv-bio").innerText;
+          const contact = document.getElementById("cv-contact").innerText;
+          const skills = document.getElementById("cv-skills").innerText;
+          const projects = document.getElementById("cv-projects").innerText;
+
+          const fullText = `Bio:\n${bio}\n\nContact:\n${contact}\n\nSkills:\n${skills}\n\nProjects:\n${projects}`;
+
+          translateBtn.disabled = true;
+          translateBtn.innerText = "Translating...";
+
+          fetch("{% url 'translate_curriculum_vita' curriculum_id=cv.pk %}", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": getCookie("csrftoken"),
+              },
+              body: JSON.stringify({
+                  text: fullText,
+                  target_language_code: langCode
+              })
+          })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.translated_text) {
+                      parseAndUpdateTranslation(data.translated_text);
+
+                      restoreBtn.style.display = "inline-block";
+                  } else {
+                      alert("Translation failed: " + (data.error || "Unknown error"));
+                  }
+              })
+              .catch(error => {
+                  console.error("Translation error:", error);
+                  alert("Translation failed. Please try again.");
+              })
+              .finally(() => {
+                  translateBtn.disabled = false;
+                  translateBtn.innerText = "Translate";
+              });
+      });
+
+      document.getElementById("restore-btn").addEventListener("click", () => {
+          if (originalContent) {
+              document.getElementById("cv-bio").innerText = originalContent.bio;
+              document.getElementById("cv-contact").innerHTML = originalContent.contact;
+
+              const skillsContainer = document.getElementById("cv-skills");
+              if (originalContent.skills.length > 0) {
+                  skillsContainer.innerHTML = originalContent.skills.map(skill =>
+                      `<span class="badge bg-primary me-1" data-skill-name="${skill}">${skill}</span>`
+                  ).join('');
+              }
+
+              const projectsContainer = document.getElementById("cv-projects");
+              if (originalContent.projects.length > 0) {
+                  projectsContainer.innerHTML = originalContent.projects.map(project =>
+                      `<div class="mb-2" data-project-name="${project.name}" data-project-desc="${project.description}">
+          <h6 class="mb-1 project-name">${project.name}</h6>
+          <p class="mb-0 project-desc">${project.description}</p>
+        </div>`
+                  ).join('');
+              }
+
+              document.getElementById("restore-btn").style.display = "none";
+          }
+      });
+
+      function parseAndUpdateTranslation(translatedText) {
+          const sections = translatedText.split(/\n\s*\n/);
+
+          sections.forEach(section => {
+              const lines = section.split('\n');
+              const header = lines[0].toLowerCase();
+
+              if (header.includes('bio')) {
+                  const bioText = lines.slice(1).join('\n').trim();
+                  if (bioText) {
+                      document.getElementById("cv-bio").innerText = bioText;
+                  }
+              } else if (header.includes('contact')) {
+                  const contactText = lines.slice(1).join('\n').trim();
+                  if (contactText) {
+                      const contactElement = document.getElementById("cv-contact");
+                      const link = contactElement.querySelector('a');
+                      if (link) {
+                          const linkHref = link.href;
+                          const linkText = link.innerText;
+                          contactElement.innerHTML = `${contactText} <a href="${linkHref}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+                      } else {
+                          contactElement.innerText = contactText;
+                      }
+                  }
+              } else if (header.includes('skill')) {
+                  const skillsText = lines.slice(1).join('\n').trim();
+                  if (skillsText && skillsText !== 'No skills listed.') {
+                      const skillsArray = skillsText.split(/[,\n]/).map(s => s.trim()).filter(s => s);
+                      const skillsContainer = document.getElementById("cv-skills");
+
+                      if (skillsArray.length > 0) {
+                          skillsContainer.innerHTML = skillsArray.map(skill =>
+                              `<span class="badge bg-primary me-1">${skill}</span>`
+                          ).join('');
+                      } else {
+                          skillsContainer.innerHTML = `<p>${skillsText}</p>`;
+                      }
+                  }
+              } else if (header.includes('project')) {
+                  const projectsText = lines.slice(1).join('\n').trim();
+                  if (projectsText && projectsText !== 'No projects listed.') {
+                      document.getElementById("cv-projects").innerHTML = `<div class="mb-2"><p>${projectsText}</p></div>`;
+                  }
+              }
+          });
+      }
+
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== "") {
+              const cookies = document.cookie.split(";");
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.startsWith(name + "=")) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+  </script>
 
 {% endblock %}

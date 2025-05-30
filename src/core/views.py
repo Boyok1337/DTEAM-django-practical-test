@@ -1,9 +1,14 @@
+import json
+
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
+from core.constants import LANG_CODES
 from core.models import CurriculumVitae
+from core.services.deepl_translate import translate_text
 from core.utils import PDFRenderer
 from core.tasks import send_cv_pdf_email
 
@@ -78,3 +83,22 @@ class CurriculumVitaeEmailPdf(View):
         send_cv_pdf_email.delay(email, cv.id)
         messages.success(request, "PFD email sent.")
         return redirect("curriculum_vitae_list")
+
+
+@csrf_exempt
+def translate_curriculum_vita_view(request, curriculum_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST method allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError as e:
+        return JsonResponse({"error": f"Invalid JSON: {str(e)}"}, status=400)
+
+    text = data.get("text", "")
+    lang_code = data.get("target_language_code", "co")
+    target_lang = LANG_CODES.get(lang_code, "EN").upper()
+
+    result, status_code = translate_text(text, target_lang)
+
+    return JsonResponse(result, status=status_code)
