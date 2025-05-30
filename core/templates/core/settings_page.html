@@ -1,0 +1,44 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <div class="container py-5">
+    <h1 class="mb-4">Django Settings Overview</h1>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <table class="table table-bordered table-striped mb-0">
+          <thead class="table-light">
+          <tr>
+            <th>Setting</th>
+            <th>Value</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><strong>DEBUG</strong></td>
+            <td>{{ DEBUG }}</td>
+          </tr>
+          <tr>
+            <td><strong>ALLOWED_HOSTS</strong></td>
+            <td>
+              {% if ALLOWED_HOSTS %}
+                <ul class="mb-0">
+                  {% for host in ALLOWED_HOSTS %}
+                    <li>{{ host }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <em>Empty</em>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td><strong>TIME_ZONE</strong></td>
+            <td>{{ TIME_ZONE }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -18,4 +18,9 @@ urlpatterns = [
         views.CurriculumVitaPDFView.as_view(),
         name="curriculum_vita_pdf"
     ),
+    path(
+        "settings/",
+        views.settings_view,
+        name="settings"
+    )
 ]

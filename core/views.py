@@ -58,3 +58,7 @@ class CurriculumVitaPDFView(View):
             return response
 
         return HttpResponse("PDF generation failed", status=500)
+
+
+def settings_view(request):
+    return render(request, 'core/settings_page.html')
