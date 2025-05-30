@@ -1,149 +1,134 @@
+# DTEAM Django Practical Test
 
-# DTEAM - Django Developer Practical Test
-
-> Welcome! This test will help us see how you structure a Django project, work with various tools, and handle common tasks in web development. Follow the instructions step by step. Good luck!
-
----
-
-## Requirements
-
-Follow PEP 8 and other style guidelines, use clear and concise commit messages and docstrings where needed, structure your project for readability and maintainability, optimize database access using Django’s built-in methods, and provide enough details in your README.
+A Django project with support for Celery, Redis, PostgreSQL, Docker, and Caddy.
 
 ---
 
-## Version Control System
+## LIVE SERVER
 
-1. Create a **public GitHub repository** for this practical test (e.g., `DTEAM-django-practical-test`).
-2. Put the text of this test (all instructions) into `README.md`.
-3. For each task, **create a separate branch** (e.g., `tasks/task-1`, `tasks/task-2`, etc.).
-4. After completing each task, **merge that branch back into `main`** but do not delete the original task branch.
+- [WEB](http://34.32.93.167:8000/)
 
 ---
 
-## Python Virtual Environment
+---
 
-1. Use `pyenv` to manage the Python version. Create a file named `.python-version` in your repository to store the exact Python version.
-2. Use **Poetry** to manage and store project dependencies (`pyproject.toml` will be created).
-3. Update your `README.md` with clear instructions on how to set up and use pyenv and Poetry.
+## 📦 Dependencies
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
 ---
 
-## Tasks
+## ⚙️ Setup
 
-### Task 1: Django Fundamentals
+### 1. Clone the repository
 
-1. **Create a New Django Project**
-   - Name it something like `CVProject`.
-   - Use the Python version from **Task 2** and latest Django release.
-   - Use **SQLite** as the database (for now).
-
-2. **Create an App and Model**
-   - Create a Django app (e.g., `main`).
-   - Define a **CV model** with fields: `firstname`, `lastname`, `skills`, `projects`, `bio`, `contacts`.
-   - Organize the data logically and efficiently.
-
-3. **Load Initial Data with Fixtures**
-   - Create a fixture with at least one sample `CV` instance.
-   - Add instructions in `README.md` for loading the fixture.
-
-4. **List Page View and Template**
-   - View for `/` to display list of CV entries.
-   - Use any CSS library.
-   - Ensure efficient database access.
-
-5. **Detail Page View**
-   - View for `/cv/<id>/` to show full CV data.
-   - Style nicely and retrieve data efficiently.
-
-6. **Tests**
-   - Basic tests for list/detail views.
-   - Update `README.md` with test running instructions.
+```bash
+git clone https://github.com/Boyok1337/DTEAM-django-practical-test.git
+cd DTEAM-django-practical-test
+```
 
 ---
 
-### Task 2: PDF Generation Basics
+### 2. Copy the `.env` file
 
-1. Choose and install any **HTML-to-PDF** generation library or tool.
-2. Add a **Download PDF** button on the CV detail page to allow PDF download.
+#### For **development (dev)**:
 
----
+```bash
+cp .env.example .env
+```
 
-### Task 3: REST API Fundamentals
+#### For **production (prod)**:
 
-1. Install **Django REST Framework** (DRF).
-2. Create **CRUD endpoints** for the CV model.
-3. Add **tests** to verify CRUD operations.
+```bash
+cp .prod.env.example .env
+```
 
----
-
-### Task 4: Middleware & Request Logging
-
-1. **Create a `RequestLog` Model**
-   - Can be in a new app (e.g., `audit`) or existing one.
-   - Fields: `timestamp`, HTTP `method`, `path`, optional: query string, remote IP, logged-in user.
-
-2. **Implement Logging Middleware**
-   - Write custom middleware that intercepts incoming requests.
-   - Save a `RequestLog` record to DB with relevant data.
-   - Ensure efficiency.
-
-3. **Recent Requests Page**
-   - View for `/logs/` showing 10 most recent requests.
-   - Template should show `timestamp`, `method`, `path`.
-
-4. **Test Logging**
-   - Verify middleware logging via tests.
+> 🔧 Edit `.env.dev` or `.env.prod` to set the variable values:
 
 ---
 
-### Task 5: Template Context Processors
+## 🚀 Running the project
 
-1. **Create `settings_context`**
-   - Context processor that injects Django settings into templates.
+### 🧪 Development mode
 
-2. **Settings Page**
-   - View (e.g., `/settings/`) that shows `DEBUG` and other settings via context processor.
+```bash
+docker-compose -f docker-compose.dev.yml up -d --build
+```
 
----
+The project will be available at:
 
-### Task 6: Docker Basics
-
-1. Use **Docker Compose** to containerize project.
-2. Switch DB from SQLite to PostgreSQL via Docker Compose.
-3. Store environment variables (e.g., DB credentials) in `.env` file.
+```
+http://localhost:8000/
+```
 
 ---
 
-### Task 7: Celery Basics
+### 🌐 Production mode
 
-1. Install & configure **Celery** (using Redis or RabbitMQ).
-2. Add a Celery worker to Docker Compose.
-3. On CV detail page, add email input + "Send PDF to Email" button to trigger Celery task.
+```bash
+docker-compose -f docker-compose.prod.yml up -d --build
+```
 
----
+The project will be available at:
 
-### Task 8: OpenAI Basics
+```
+http://<YOUR_SERVER_IP>/
+```
 
-1. On CV detail page, add **"Translate"** button and language selector.
-2. Include these languages:
-   - Cornish, Manx, Breton, Inuktitut, Kalaallisut, Romani, Occitan, Ladino,
-   - Northern Sami, Upper Sorbian, Kashubian, Zazaki, Chuvash, Livonian,
-   - Tsakonian, Saramaccan, Bislama.
-
-3. Hook up to OpenAI Translation API (or similar). Translate CV content into selected language.
+> By default, Caddy is used as a reverse proxy on ports 80 and 443.
 
 ---
 
-### Task 9: Deployment
+## 🧪 Running tests
 
-Deploy to **DigitalOcean** or any other VPS.
+### In development mode:
 
-> *Referral link for DigitalOcean with $200 balance: https://m.do.co/c/967939ea1e74*
+```bash
+docker-compose -f docker-compose.dev.yml exec django python manage.py test
+```
+
+## Load fixture
+
+### In development mode:
+
+```bash
+docker-compose -f docker-compose.dev.yml exec django python manage.py loaddata cv_fixture.json
+
+```
 
 ---
 
-## That’s it!
+## 🛠 Main services
 
-Complete each task thoroughly, commit your work using branch-and-merge, and ensure your `README.md` explains how to install, run, and test the project.
+| Service        | Description             | Port        |
+|----------------|-------------------------|-------------|
+| Django         | Web server              | 8000        |
+| PostgreSQL     | Database                | 5432        |
+| Redis          | Broker for Celery       | 6379        |
+| Celery Worker  | Background tasks        | -           |
+| Celery Beat    | Task scheduler          | -           |
+| Caddy          | Proxy server + SSL      | 80 / 443    |
 
-**Thank you!**
+---
+
+## 🧹 Useful commands
+
+### Create superuser
+
+```bash
+docker-compose -f docker-compose.dev.yml exec django python manage.py createsuperuser
+```
+
+### Migrations
+
+```bash
+docker-compose -f docker-compose.dev.yml exec django python manage.py makemigrations
+docker-compose -f docker-compose.dev.yml exec django python manage.py migrate
+```
+
+---
+
+## 📝 Author
+
+Developed as a practical test assignment.
