@@ -1,8 +1,9 @@
 # Django
+COLLECTSTATIC_ON_STARTUP=1
 PYTHONENCODING=utf8
-DEBUG=1
-DJANGO_SECRET_KEY="DJANGO_SECRET_KEY"
-CONFIGURATION=dev
+DEBUG=0
+DJANGO_SECRET_KEY=your_secret_key_here
+CONFIGURATION=prod
 COMPOSE_IMAGES_PREFIX=dteam
 
 # Postgres
@@ -16,11 +17,14 @@ POSTGRES_PASSWORD=dbpassword
 REDIS_URL=redis://redis:6379/0
 
 # Web
-SITE_URL=http://voting.local:8000
+ALLOWED_HOSTS=example.com
+SITE_DOMAIN=example.com
+SITE_URL=http://example.com
 
 # Email
-EMAIL_HOST_USER="email@mail.com"
-EMAIL_HOST_PASSWORD="pass"
+EMAIL_HOST_USER=""
+EMAIL_HOST_PASSWORD=""
 
 # AI
-DEEPL_API_KEY="example:fx"
+DEEPL_API_KEY="123:fx"
+
